@@ -82,12 +82,38 @@ class GameContainer {
         }
     }
 
-    public void Progress(char c) {
+    private void RestartGame() {
+
+    }
+
+    public void Progress(char? c) {
         switch (_gameState) {
             case GameState.Lobby:
-            _gameState = GameState.WaitingForOpponent;
+            if (c == null) return;
+            _gameState = GameState.Connecting;
             _outgoingPackets.Enqueue(new RequestJoinPacket());
             _networkThread = new Thread(() => NetworkRun());
+            break;
+
+            case GameState.Connecting:
+            bool recvdPacket = _incomingPackets.TryDequeue(out var packet);
+            if (recvdPacket && packet!.PacketType == PacketType.RequestJoinAck) {
+                _gameState = GameState.WaitingForOpponent;
+                _outgoingPackets.Enqueue(new WaitingGamePacket());
+            }
+            else {
+                RestartGame();
+            }
+            break;
+
+            case GameState.WaitingForOpponent:
+            recvdPacket = _incomingPackets.TryDequeue(out packet);
+            if (recvdPacket && packet!.PacketType == PacketType.GameStart) {
+                _gameState = GameState.InGame;
+            }
+            else {
+                RestartGame();
+            }
             break;
 
             case GameState.InGame:
@@ -110,6 +136,7 @@ class GameContainer {
             Console.WriteLine(_startingScreen);
             break;
 
+            case GameState.Connecting:
             case GameState.WaitingForOpponent:
             Console.WriteLine(_waitingScreen);
             break;

@@ -13,7 +13,7 @@ public class Packet {
         PacketType = packetType;
     }
 
-    public byte[] GetBytes() {
+    public virtual byte[] GetBytes() {
         byte[] bytes = new byte[Payload.Length + sizeof(PacketType)];
 
         BitConverter.GetBytes((int)PacketType).CopyTo(bytes, 0);
