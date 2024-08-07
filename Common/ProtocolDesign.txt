@@ -1,0 +1,9 @@
+PacketTypes:
+
+RequestJoin - client to server
+RequestJoinAck - server to client
+WaitingForGame - client to server
+GameStart - server to client
+MyState - client to server
+GameState - server to client
+Bye - anyone
