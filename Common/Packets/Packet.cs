@@ -16,8 +16,8 @@ public class Packet {
     public virtual byte[] GetBytes() {
         byte[] bytes = new byte[Payload.Length + sizeof(PacketType)];
 
-        BitConverter.GetBytes((int)PacketType).CopyTo(bytes, 0);
-        Payload.CopyTo(Payload, sizeof(PacketType));
+        bytes[0] = (byte)PacketType;
+        Payload.CopyTo(bytes, sizeof(PacketType));
 
         return bytes;
     }

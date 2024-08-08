@@ -2,7 +2,7 @@ namespace Common.Packets;
 
 public static class PacketFactory {
     public static Packet FromBytes(byte[] bytes) {
-        PacketType type = (PacketType)BitConverter.ToInt32(bytes, 0);
+        PacketType type = (PacketType)bytes[0];
 
         return type switch
         {

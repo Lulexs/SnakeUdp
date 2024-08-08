@@ -2,17 +2,8 @@
 
 using Client;
 
-bool run = true;
 GameContainer gc = new();
-ConsoleKeyInfo? key = null;
-while (run) {
-    if (Console.KeyAvailable) {
-        key = Console.ReadKey(true);
-    }
-    gc.Progress(key?.KeyChar);
-    key = null;
-    gc.Display();
-}
+gc.Run();
 
 // using System.Net;
 // using System.Net.Sockets;

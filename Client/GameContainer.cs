@@ -83,50 +83,58 @@ class GameContainer {
     }
 
     private void RestartGame() {
-
+        Console.WriteLine("Here");
     }
 
-    public void Progress(char? c) {
+    public void Run() {
+        bool run = true;
+
+        while (run) {
+            if (Console.KeyAvailable) {
+                ConsoleKeyInfo consoleKeyInfo = Console.ReadKey(true);
+                Progress(consoleKeyInfo.KeyChar);
+            }
+
+            bool recvdPacket = _incomingPackets.TryDequeue(out var packet);
+            if (recvdPacket) {
+                if (_gameState == GameState.Connecting && packet!.PacketType == PacketType.RequestJoinAck) {
+                    _gameState = GameState.WaitingForOpponent;
+                    _outgoingPackets.Enqueue(new WaitingGamePacket());
+                }
+                else if (_gameState == GameState.Connecting) {
+                    RestartGame();
+                    return;
+                }
+
+                if (_gameState == GameState.WaitingForOpponent && packet!.PacketType == PacketType.GameStart) {
+                    _gameState = GameState.InGame;
+                }
+                else if (_gameState == GameState.WaitingForOpponent) {
+                    RestartGame();
+                    return;
+                }
+            }
+
+            Display();
+        }
+    }
+
+    private void Progress(char c) {
         switch (_gameState) {
             case GameState.Lobby:
-            if (c == null) return;
             _gameState = GameState.Connecting;
             _outgoingPackets.Enqueue(new RequestJoinPacket());
             _networkThread = new Thread(() => NetworkRun());
-            break;
-
-            case GameState.Connecting:
-            bool recvdPacket = _incomingPackets.TryDequeue(out var packet);
-            if (recvdPacket && packet!.PacketType == PacketType.RequestJoinAck) {
-                _gameState = GameState.WaitingForOpponent;
-                _outgoingPackets.Enqueue(new WaitingGamePacket());
-            }
-            else {
-                RestartGame();
-            }
-            break;
-
-            case GameState.WaitingForOpponent:
-            recvdPacket = _incomingPackets.TryDequeue(out packet);
-            if (recvdPacket && packet!.PacketType == PacketType.GameStart) {
-                _gameState = GameState.InGame;
-            }
-            else {
-                RestartGame();
-            }
+            _networkThread.Start();
             break;
 
             case GameState.InGame:
-            break;
-
-            default:
-            _gameState = (GameState)(((int)_gameState + 1) % (int)(GameState.WaitingForOpponent + 1));
             break;
         }
         _redraw = true;
     }
 
-    public void Display() {
+    private void Display() {
         if (!_redraw)
             return;
         _redraw = false;
