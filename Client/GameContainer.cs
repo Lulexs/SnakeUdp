@@ -83,7 +83,7 @@ class GameContainer {
     }
 
     private void RestartGame() {
-        Console.WriteLine("Here");
+        Console.WriteLine("HereRestart");
     }
 
     public void Run() {
@@ -106,7 +106,7 @@ class GameContainer {
                     return;
                 }
 
-                if (_gameState == GameState.WaitingForOpponent && packet!.PacketType == PacketType.GameStart) {
+                else if (_gameState == GameState.WaitingForOpponent && packet!.PacketType == PacketType.GameStart) {
                     _gameState = GameState.InGame;
                 }
                 else if (_gameState == GameState.WaitingForOpponent) {
