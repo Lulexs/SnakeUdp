@@ -108,6 +108,7 @@ class GameContainer {
 
                 else if (_gameState == GameState.WaitingForOpponent && packet!.PacketType == PacketType.GameStart) {
                     _gameState = GameState.InGame;
+                    _redraw = true;
                 }
                 else if (_gameState == GameState.WaitingForOpponent) {
                     RestartGame();
