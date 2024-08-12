@@ -6,9 +6,7 @@ class Game {
 
     private readonly Snake _mySnake = new();
     private Part _myFood;
-    private int _myScore = 0;
     private readonly Snake _oppSnake = new();
-    private int _oppScore = 0;
     private Part _oppFood;
     private readonly Random _random;
 
@@ -17,7 +15,7 @@ class Game {
         _random = new(seed);
         var (foodI, foodJ) = GenerateFood();
         _myFood = new(foodI, foodJ, 0, 0);
-        _oppFood = new(foodI, foodJ, 0, 0);
+        _oppFood = new(foodI, foodJ, 0, 0, 71);
     }
 
     public Tuple<int, int> GenerateFood() {
@@ -43,7 +41,6 @@ class Game {
 
         if (_mySnake.head.I == _myFood.I && _mySnake.head.J == _myFood.J) {
             _mySnake.Extend();
-            _myScore += 1;
             
             var (foodI, foodJ) = GenerateFood();
             _myFood = new(foodI, foodJ, 0, 0);

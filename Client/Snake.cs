@@ -6,12 +6,14 @@ public class Snake {
     public Part head { get; set; }
     private int diri = 1;
     private int dirj = 0;
+    private int _offset = 0; 
     
     private readonly Dictionary<string, Tuple<int, int>> turns = [];
     
 
-    public Snake() {
-        head = new(4, 4, diri, dirj);
+    public Snake(int offset = 0) {
+        _offset = offset;
+        head = new(4, 4, diri, dirj, _offset);
         _parts.Add(head);
     }
 
@@ -25,7 +27,7 @@ public class Snake {
 
     public void Extend() {
         var last = _parts.Last();
-        _parts.Add(new Part(last.I - last.DirI, last.J - last.DirJ, last.DirI, last.DirJ));
+        _parts.Add(new Part(last.I - last.DirI, last.J - last.DirJ, last.DirI, last.DirJ, _offset));
     }
 
     public void Move() {
