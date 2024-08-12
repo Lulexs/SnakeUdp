@@ -14,9 +14,13 @@ class Game {
         _random = new(1);
     }
 
-    public void Display() {
+    public void InitDraw() {
         _board.Draw();
         _mySnake.Display();
+    }
+
+    public void Move() {
+        _mySnake.Move();
     }
 
     

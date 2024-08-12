@@ -115,8 +115,9 @@ class GameContainer {
                     return;
                 }
             }
-
+            _game.Move();
             Display();
+            Thread.Sleep(500);
         }
     }
 
@@ -151,7 +152,7 @@ class GameContainer {
             break;
 
             case GameState.InGame:
-            _game.Display();
+            _game.InitDraw();
             break;
 
             default:
