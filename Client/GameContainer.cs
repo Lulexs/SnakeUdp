@@ -131,6 +131,7 @@ class GameContainer {
             break;
 
             case GameState.InGame:
+            _game.ChangeDir(c);
             break;
         }
         _redraw = true;

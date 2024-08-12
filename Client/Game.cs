@@ -23,5 +23,19 @@ class Game {
         _mySnake.Move();
     }
 
+    public void ChangeDir(char c) {
+        if (c == 'w' || c == 'W') {
+            _mySnake.ChangeDir(-1, 0);
+        }
+        else if (c == 's' || c == 'S') {
+            _mySnake.ChangeDir(1, 0);
+        }
+        else if (c == 'a' || c == 'A') {
+            _mySnake.ChangeDir(0, -1);
+        }
+        else if (c == 'd' || c == 'D') {
+            _mySnake.ChangeDir(0, 1);
+        }
+    }
     
 }
