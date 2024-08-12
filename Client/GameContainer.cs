@@ -57,7 +57,7 @@ class GameContainer {
 ";
 
     private bool _redraw = true;
-    private GameState _gameState = GameState.Lobby;
+    private GameState _gameState = GameState.InGame;
     private readonly Game _game = new();
 
     private readonly UdpClient _client = new();
@@ -148,6 +148,10 @@ class GameContainer {
             case GameState.Connecting:
             case GameState.WaitingForOpponent:
             Console.WriteLine(_waitingScreen);
+            break;
+
+            case GameState.InGame:
+            _game.Display();
             break;
 
             default:
