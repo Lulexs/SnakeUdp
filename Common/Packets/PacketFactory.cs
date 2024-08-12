@@ -9,7 +9,7 @@ public static class PacketFactory {
             PacketType.RequestJoin => new RequestJoinPacket(),
             PacketType.RequestJoinAck => new RequestJoinAckPacket(),
             PacketType.WaitingGame => new WaitingGamePacket(),
-            PacketType.GameStart => new GameStartPacket(),
+            PacketType.GameStart => new GameStartPacket(bytes.Skip(1).ToArray()),
             PacketType.MyState => new MyStatePacket(),
             PacketType.GameState => new GameStatePacket(),
             PacketType.Bye => new ByePacket(),

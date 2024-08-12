@@ -3,7 +3,7 @@ namespace Client;
 
 public class Snake {
     private readonly List<Part> _parts = [];
-    private readonly Part head;
+    public Part head { get; set; }
     private int diri = 1;
     private int dirj = 0;
     
@@ -13,6 +13,19 @@ public class Snake {
     public Snake() {
         head = new(4, 4, diri, dirj);
         _parts.Add(head);
+    }
+
+    public bool Has(int i, int j) {
+        foreach (var part in _parts) {
+            if (part.I == i && part.J == j)
+                return true;
+        }
+        return false;
+    }
+
+    public void Extend() {
+        var last = _parts.Last();
+        _parts.Add(new Part(last.I - last.DirI, last.J - last.DirJ, last.DirI, last.DirJ));
     }
 
     public void Move() {

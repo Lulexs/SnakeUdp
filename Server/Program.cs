@@ -16,7 +16,7 @@ ConcurrentQueue<Tuple<Packet, IPEndPoint>> _incomingPackets = new();
 bool _networkRun = true;
 Thread networkThread = new Thread(() => NetworkRun());
 networkThread.Start();
-
+Random random = new();
 
 while (true) {
 
@@ -39,12 +39,13 @@ while (true) {
         if (!_playersToArenas.ContainsKey(cliEndpoint)) {
             if (_playerInQueue != null) {
                 var arena = new Arena(_playerInQueue, cliEndpoint);
-                _outgoingPackets.Enqueue(new(new GameStartPacket(), cliEndpoint));
-                _outgoingPackets.Enqueue(new(new GameStartPacket(), _playerInQueue));
+                int seed = random.Next();
+                _outgoingPackets.Enqueue(new(new GameStartPacket(seed), cliEndpoint));
+                _outgoingPackets.Enqueue(new(new GameStartPacket(seed), _playerInQueue));
                 _playerInQueue = null;
             }
             else {
-                _playerInQueue = cliEndpoint;   
+                _playerInQueue = cliEndpoint;
             }
         }
         break;

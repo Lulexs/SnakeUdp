@@ -58,7 +58,7 @@ class GameContainer {
 
     private bool _redraw = true;
     private GameState _gameState = GameState.InGame;
-    private readonly Game _game = new();
+    private Game _game = new(5); // private Game _game = null!;
 
     private readonly UdpClient _client = new();
     private IPEndPoint _serverEndpoint = new(IPAddress.Loopback, 11000);
@@ -108,6 +108,7 @@ class GameContainer {
 
                 else if (_gameState == GameState.WaitingForOpponent && packet!.PacketType == PacketType.GameStart) {
                     _gameState = GameState.InGame;
+                    _game = new(((GameStartPacket)packet).Seed);
                     _redraw = true;
                 }
                 else if (_gameState == GameState.WaitingForOpponent) {
@@ -115,7 +116,7 @@ class GameContainer {
                     return;
                 }
             }
-            _game.Move();
+            _game?.Move();
             Display();
             Thread.Sleep(500);
         }
