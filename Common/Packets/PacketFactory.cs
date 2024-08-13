@@ -11,7 +11,6 @@ public static class PacketFactory {
             PacketType.WaitingGame => new WaitingGamePacket(),
             PacketType.GameStart => new GameStartPacket(bytes.Skip(1).ToArray()),
             PacketType.MyState => new MyStatePacket(bytes.Skip(1).ToArray()),
-            PacketType.GameState => new GameStatePacket(),
             PacketType.Bye => new ByePacket(),
             _ => throw new UnknownPacketTypeException(),
         };

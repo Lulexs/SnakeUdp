@@ -31,6 +31,8 @@ public class Snake {
     public void Extend() {
         var last = _parts.Last();
         _parts.Add(new Part(last.I - last.DirI, last.J - last.DirJ, last.DirI, last.DirJ, _offset));
+        Undisplays.Enqueue(new(last.I - last.DirI, last.J - last.DirJ));
+        Displays.Enqueue(new(last.I - last.DirI, last.J - last.DirJ));
     }
 
     public void Move() {

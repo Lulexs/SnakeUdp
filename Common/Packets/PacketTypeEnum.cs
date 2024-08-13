@@ -6,6 +6,5 @@ public enum PacketType : byte {
     WaitingGame,
     GameStart,
     MyState,
-    GameState,
     Bye
 }

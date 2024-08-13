@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 using Common.Packets;
@@ -114,6 +115,10 @@ class GameContainer {
                 else if (_gameState == GameState.WaitingForOpponent) {
                     RestartGame();
                     return;
+                }
+
+                else if (_gameState == GameState.InGame && packet!.PacketType == PacketType.MyState) {
+                    _game!.OpponetMove((MyStatePacket)packet);
                 }
             }
             if (_game is not null && _game.Move()) {

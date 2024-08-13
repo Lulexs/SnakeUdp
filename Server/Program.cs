@@ -7,8 +7,7 @@ using Server;
 UdpClient listener = new(11000);
 
 IPEndPoint? _playerInQueue = null;
-ConcurrentDictionary<IPEndPoint, Arena> _playersToArenas = new();
-ConcurrentDictionary<Arena, bool> _arenas = new();
+ConcurrentDictionary<string, Arena> _playersToArenas = new();
 
 ConcurrentQueue<Tuple<Packet, IPEndPoint>> _outgoingPackets = new();
 ConcurrentQueue<Tuple<Packet, IPEndPoint>> _incomingPackets = new();
@@ -36,17 +35,25 @@ while (true) {
         break;
 
         case PacketType.WaitingGame:
-        if (!_playersToArenas.ContainsKey(cliEndpoint)) {
+        if (!_playersToArenas.ContainsKey($"{cliEndpoint.Address}-{cliEndpoint.Port}")) {
             if (_playerInQueue != null) {
                 var arena = new Arena(_playerInQueue, cliEndpoint);
                 int seed = random.Next();
                 _outgoingPackets.Enqueue(new(new GameStartPacket(seed), cliEndpoint));
                 _outgoingPackets.Enqueue(new(new GameStartPacket(seed), _playerInQueue));
+                _playersToArenas.TryAdd($"{cliEndpoint.Address}-{cliEndpoint.Port}", arena);
+                _playersToArenas.TryAdd($"{_playerInQueue.Address}-{_playerInQueue.Port}", arena);
                 _playerInQueue = null;
             }
             else {
                 _playerInQueue = cliEndpoint;
             }
+        }
+        break;
+
+        case PacketType.MyState:
+        if (_playersToArenas.TryGetValue($"{cliEndpoint.Address}-{cliEndpoint.Port}", out var playersArena)) {
+            _outgoingPackets.Enqueue(new((MyStatePacket)packet, cliEndpoint.Equals(playersArena.Player1) ? playersArena.Player2 : playersArena.Player1));
         }
         break;
     }
