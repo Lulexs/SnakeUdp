@@ -60,11 +60,13 @@ class GameContainer {
     private bool _redraw = true;
     private GameState _gameState = GameState.Lobby;
     // private Game _game = new(5);
-    private Game _game = null!;
+    private Game? _game = null;
     private readonly UdpClient _client = new();
     private IPEndPoint _serverEndpoint = new(IPAddress.Loopback, 11000);
     private readonly ConcurrentQueue<Packet> _outgoingPackets = new();
     private readonly ConcurrentQueue<Packet> _incomingPackets = new();
+    private int _oppScore = 0;
+    private int _myScore = 0;
 
     private Thread _networkThread = null!;
     private bool _networkRun = true;
@@ -117,13 +119,27 @@ class GameContainer {
                     return;
                 }
 
-                else if (_gameState == GameState.InGame && packet!.PacketType == PacketType.MyState) {
+                else if ((_gameState == GameState.InGame || _gameState == GameState.WaitingFinish) && packet!.PacketType == PacketType.MyState) {
                     _game!.OpponetMove((MyStatePacket)packet);
+                }
+                else if (_gameState == GameState.InGame && packet!.PacketType == PacketType.Bye) {
+                    _oppScore = ((ByePacket)packet).Score;
+                }
+                else if (_gameState == GameState.WaitingFinish && packet!.PacketType == PacketType.Bye) {
+                    _oppScore = ((ByePacket)packet).Score;
+                    _gameState = GameState.Finished;
+                    _redraw = true;
                 }
             }
             if (_game is not null && _game.Move()) {
                 _outgoingPackets.Enqueue(new MyStatePacket(_game.GameState()));
-            };
+                _myScore = _game.Score;
+            }
+            else if (_game is not null) {
+                _outgoingPackets.Enqueue(new ByePacket(_game.Score));
+                _gameState = GameState.WaitingFinish;
+                _game = null;
+            }
 
             Display();
             Thread.Sleep(500);
@@ -140,7 +156,7 @@ class GameContainer {
             break;
 
             case GameState.InGame:
-            _game.ChangeDir(c);
+            _game?.ChangeDir(c);
             break;
         }
         _redraw = true;
@@ -162,11 +178,20 @@ class GameContainer {
             break;
 
             case GameState.InGame:
-            _game.InitDraw();
+            _game?.InitDraw();
             break;
 
-            default:
-            Console.WriteLine("Not implemented yet");
+            case GameState.Finished:
+            if (_myScore > _oppScore) {
+                Console.WriteLine("You won!");
+            }
+            else if (_myScore == _oppScore) {
+                Console.WriteLine("Draw!");
+            }
+            else {
+                Console.WriteLine("You lost!");
+            }
+            Console.WriteLine("Press any key to continue");
             break;
         }
     }

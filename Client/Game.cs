@@ -12,6 +12,7 @@ class Game {
     private Part _oppPart = new(4, 4, 0, 0, 71);
     private Part _oppFood;
     int lastRecvTag;
+    public int Score => _mySnake.Length;
 
     public Game(int seed) {
         Console.WriteLine(seed);
@@ -45,6 +46,10 @@ class Game {
     public bool Move() {
         _mySnake.Move();
 
+        if (_mySnake.HasNoHead(_mySnake.head.I, _mySnake.head.J)) {
+            return false;
+        }
+
         if (_mySnake.head.I == _myFood.I && _mySnake.head.J == _myFood.J) {
             _mySnake.Extend();
             
@@ -54,6 +59,7 @@ class Game {
 
             return true;
         }
+
         return true;
     }
 

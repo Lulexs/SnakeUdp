@@ -5,5 +5,6 @@ enum GameState {
     Connecting,
     WaitingForOpponent,
     InGame,
+    WaitingFinish,
     Finished
 }

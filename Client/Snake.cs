@@ -7,6 +7,7 @@ public class Snake {
     private int diri = 1;
     private int dirj = 0;
     private int _offset = 0; 
+    public int Length => _parts.Count - 1;
     
     private readonly Dictionary<string, Tuple<int, int>> turns = [];
 
@@ -23,6 +24,14 @@ public class Snake {
     public bool Has(int i, int j) {
         foreach (var part in _parts) {
             if (part.I == i && part.J == j)
+                return true;
+        }
+        return false;
+    }
+
+    public bool HasNoHead(int i, int j) {
+        for (int k = 1; k < _parts.Count; ++i) {
+            if (_parts[k].I == i && _parts[k].J == j)
                 return true;
         }
         return false;
@@ -48,7 +57,6 @@ public class Snake {
                 }
             }
             part.Move();
-            
         }
         Displays.Enqueue(new(head.I, head.J));
         head.Display();
