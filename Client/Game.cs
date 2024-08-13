@@ -3,11 +3,8 @@ namespace Client;
 
 class Game {
     private readonly Board _board = new();
-
     private readonly Snake _mySnake = new();
     private Part _myFood;
-    private readonly Snake _oppSnake = new();
-    private Part _oppFood;
     private readonly Random _random;
 
     public Game(int seed) {
@@ -15,7 +12,6 @@ class Game {
         _random = new(seed);
         var (foodI, foodJ) = GenerateFood();
         _myFood = new(foodI, foodJ, 0, 0);
-        _oppFood = new(foodI, foodJ, 0, 0, 71);
     }
 
     public Tuple<int, int> GenerateFood() {
@@ -36,7 +32,7 @@ class Game {
         _myFood.Display();
     }
 
-    public void Move() {
+    public bool Move() {
         _mySnake.Move();
 
         if (_mySnake.head.I == _myFood.I && _mySnake.head.J == _myFood.J) {
@@ -45,7 +41,15 @@ class Game {
             var (foodI, foodJ) = GenerateFood();
             _myFood = new(foodI, foodJ, 0, 0);
             _myFood.Display();
+            return true;
         }
+        return true;
+    }
+
+    public Tuple<int, int, int, int, int, int> GameState() {
+        var undisplay = _mySnake.Undisplays.Dequeue();
+        var displays = _mySnake.Displays.Dequeue();
+        return new Tuple<int, int, int, int, int, int>(_myFood.I, _myFood.J, undisplay.Item1, undisplay.Item2, displays.Item1, displays.Item2);
     }
 
     public void ChangeDir(char c) {

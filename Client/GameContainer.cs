@@ -57,9 +57,9 @@ class GameContainer {
 ";
 
     private bool _redraw = true;
-    private GameState _gameState = GameState.InGame;
-    private Game _game = new(5); // private Game _game = null!;
-
+    private GameState _gameState = GameState.Lobby;
+    // private Game _game = new(5);
+    private Game _game = null!;
     private readonly UdpClient _client = new();
     private IPEndPoint _serverEndpoint = new(IPAddress.Loopback, 11000);
     private readonly ConcurrentQueue<Packet> _outgoingPackets = new();
@@ -116,7 +116,10 @@ class GameContainer {
                     return;
                 }
             }
-            _game?.Move();
+            if (_game is not null && _game.Move()) {
+                _outgoingPackets.Enqueue(new MyStatePacket(_game.GameState()));
+            };
+
             Display();
             Thread.Sleep(500);
         }

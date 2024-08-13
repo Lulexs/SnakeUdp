@@ -9,6 +9,9 @@ public class Snake {
     private int _offset = 0; 
     
     private readonly Dictionary<string, Tuple<int, int>> turns = [];
+
+    public Queue<Tuple<int, int>> Undisplays = [];
+    public Queue<Tuple<int, int>> Displays = []; 
     
 
     public Snake(int offset = 0) {
@@ -31,6 +34,7 @@ public class Snake {
     }
 
     public void Move() {
+        Undisplays.Enqueue(new(_parts.Last().I, _parts.Last().J));
         _parts.Last().Undisplay();
         foreach(var part in _parts) {
             var posString = $"{part.I}-{part.J}";
@@ -44,6 +48,7 @@ public class Snake {
             part.Move();
             
         }
+        Displays.Enqueue(new(head.I, head.J));
         head.Display();
     }
 
@@ -54,6 +59,8 @@ public class Snake {
     }
 
     public void ChangeDir(int diri, int dirj) {
+        if (diri == -head.DirI || dirj == -head.DirJ)
+            return;
         turns.Add($"{head.I}-{head.J}", new Tuple<int, int>(diri, dirj));
         head.DirI = diri;
         head.DirJ = dirj;
